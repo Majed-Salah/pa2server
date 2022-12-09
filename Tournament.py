@@ -135,7 +135,7 @@ class Tournament():
         else:
             raise ValueError("Team not participating in this match")
 
-        player_names = [player for player in lineup.squad]
+        player_names = [player for player in lineup.team.squad]
         for player in player_names:
             if player.name == player_name:
                 p = player
