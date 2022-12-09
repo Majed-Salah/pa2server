@@ -98,6 +98,7 @@ class Tournament():
         match: Match = None
         ref: Referee = None
 
+        # return list of matches where the passed datetime is equal to match datetime
         list_matches = [match for match in self.__list_matches if match.match_datetime == match_datetime]
 
         if len(list_matches) == 0:
@@ -105,11 +106,12 @@ class Tournament():
         elif len(list_matches) == 1:
             match = list_matches[0]
 
+        # check if referee to be added in match is in list of tournament referees
         list_refs = [ref for ref in self.__list_referees if ref.name == ref_name]
 
-        if len(list_refs) == 0:
+        if len(list_refs) == 0:  # meaning that referee with passed name is not in tournament
             raise ValueError("No referee with matching name.")
-        elif len(list_refs) == 1:
+        elif len(list_refs) == 1: # will return list of size 1 if referee in tournament (cant have multiple with same name)
             ref = list_refs[0]
 
         match.add_referee(ref)
