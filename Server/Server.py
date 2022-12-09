@@ -1,11 +1,12 @@
-import socket as sckt
 from socket import socket, AF_INET, SOCK_STREAM
 
-host = "127.0.0.1"
-port = 50000
+server_socket = socket()
 
-a_socket = socket(AF_INET, SOCK_STREAM)
-a_socket
+server_socket.bind(('localhost', 6000))
+server_socket.listen(5)
 
-message = "Howdy".encode('UTF-8')
-a_socket.send(message)
+client_socket, addr = server_socket.accept()
+print(f'Connected to: {addr}')
+
+client_message = client_socket.recv(1024).decode('UTF-8')
+print(client_message)
