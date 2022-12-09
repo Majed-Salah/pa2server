@@ -3,6 +3,8 @@ from Country import Country
 from Team import Team
 from Match import Match
 from Referee import Referee
+from Player import Player
+from LineUp import LineUp
 
 class Tournament():
     def __init__(self, name: str, start_date: datetime, end_date: datetime):
@@ -111,3 +113,34 @@ class Tournament():
             ref = list_refs[0]
 
         match.add_referee(ref)
+
+
+    def add_player_to_match(self, match_datetime: datetime, team_name: str, player_name: str):
+
+        match: Match = None
+        lineup: LineUp = None
+        p: Player = None
+
+        list_matches = [match for match in self.__list_matches if match.match_datetime == match_datetime]
+
+        if len(list_matches) == 0:
+            raise ValueError("Match is not in tournament.")
+        elif len(list_matches) == 1:
+            match = list_matches[0]
+
+        if match.team_A.name == team_name:
+            lineup = match.team_A
+        elif match.team_B.name == team_name:
+            lineup = match.team_B
+        else:
+            raise ValueError("Team not participating in this match")
+
+        player_names = [player for player in lineup.squad]
+        for player in player_names:
+            if player.name == player_name:
+                p = player
+
+
+        lineup.add_player(p)
+
+

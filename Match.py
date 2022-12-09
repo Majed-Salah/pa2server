@@ -2,26 +2,25 @@ from datetime import datetime
 from Team import Team
 from Referee import Referee
 from Player import Player
+from LineUp import LineUp
 
 class Match():
-    def __init__(self, match_datetime: datetime, team_A: Team, team_B: Team):
+    def __init__(self, match_datetime: datetime, team_A: LineUp, team_B: LineUp):
         self.__match_datetime = match_datetime
         self.__team_A = team_A
         self.__team_B = team_B
         self.__score_team_A = 0
         self.__score_team_B = 0
         self.__match_referees = []
-        self.__team_A_lineup = []
-        self.__team_B_lineup = []
 
 
     @property
-    def team_A(self):
+    def team_A(self) -> LineUp:
         return self.__team_A
 
 
     @property
-    def team_B(self):
+    def team_B(self) -> LineUp:
         return self.__team_B
 
 

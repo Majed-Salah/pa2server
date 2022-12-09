@@ -19,6 +19,11 @@ class Team():
         return self.__name
 
 
+    @property
+    def squad(self) -> list:
+        return self.__squad
+
+
     def add_player(self, player_name: str, age: int, height: float, weight: float):
         player = Player(player_name, age, height, weight)
         self.__squad.append(player)
