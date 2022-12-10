@@ -27,9 +27,7 @@ class ClientWorker(Thread):
     def run(self):
         while self.__keep_running_client:
             try:
-                client_msg = ""
-                # client_msg = self.__socket.recv() # receive a line of instruction
-
+                client_msg = self.__socket.recv(1024).decode('UTF-8')  # receive a line of instruction
                 if client_msg == "T|":
                     self.__socket.send("0|OK".encode('UTF-8'))
                     # TODO server.removeCW(self)
@@ -68,30 +66,35 @@ class ClientWorker(Thread):
         if command == "D":
             try:
                 t.add_team(split_msg[1], split_msg[2])
+                return "0|OK|Added team to tournament"
             except:
                 return "1|ERR"
 
         if command == "C":
             try:
                 t.add_country(split_msg[1])
+                return "0|OK|Added Country"
             except:
                 return "1|ERR"
 
         if command == "R":
             try:
                 t.add_referee(split_msg[1], split_msg[2])
+                return "0|OK|Referee added to tournament"
             except:
                 return "1|ERR"
 
         if command == "P":
             try:
                 t.add_player(split_msg[1], split_msg[2], int(split_msg[3]), float(split_msg[4]), float(split_msg[5]))
+                return "0|OK|Player added to tournament"
             except:
                 return "1|ERR"
 
         if command == "M":
             try:
                 t.add_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
+                return "0|OK|Successfully added match to tournament."
             except:
                 return "1|ERR"
 
@@ -112,6 +115,7 @@ class ClientWorker(Thread):
             try:
                 t.set_match_score(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), int(split_msg[2]),
                                   int(split_msg[3]))
+                return "0|OK|Match score successfully set."
             except:
                 return "1|ERR"
 
@@ -139,7 +143,7 @@ class ClientWorker(Thread):
                     response += "|" + match.__str__()
                 return response
             except:
-                return "1|ERR"
+                return "1|ERR|No matches for selected team."
 
         if command == "U":
             try:
@@ -185,6 +189,7 @@ class ClientWorker(Thread):
         if command == "Y":
             try:
                 t.add_player_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
+                return "0|OK|Player added to match."
             except:
                 return "1|ERR"
 
