@@ -25,6 +25,7 @@ class ClientWorker(Thread):
         # self.__socket.send(message)
 
     def run(self):
+        print("Testing")
         while self.__keep_running_client:
             try:
                 client_msg = self.__socket.recv(1024).decode('UTF-8')  # receive a line of instruction
@@ -212,3 +213,6 @@ class ClientWorker(Thread):
                 pass
             except:
                 return "1|ERR"
+
+#test = ClientWorker()
+#test.start()
