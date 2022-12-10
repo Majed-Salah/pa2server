@@ -1,6 +1,8 @@
+import re
 from threading import Thread
 import datetime
 from socket import socket, AF_INET, SOCK_STREAM
+from Server import Server
 from Tournament.Tournament import Tournament
 
 
@@ -17,18 +19,16 @@ class ClientWorker(Thread):
     def keep_running_client(self):
         return self.__keep_running_client
 
-    def __init__(self):
+    def __init__(self, client_socket, server: Server):
         super().__init__()
-        self.__socket = socket(AF_INET, SOCK_STREAM)
-        self.__connection = self.__socket.connect(("127.0.0.1", 6000))
+        self.__socket = client_socket
         self.__keep_running_client = True
-        # self.__socket.send(message)
+        self.__server = server
 
     def run(self):
         while self.__keep_running_client:
             try:
                 client_msg = self.__socket.recv(1024).decode('UTF-8')  # receive a line of instruction
-                print("CLIENT MSG: " + client_msg)
                 if client_msg == "T|":
                     self.__socket.send("0|OK".encode('UTF-8'))
                     # TODO server.removeCW(self)
@@ -58,9 +58,15 @@ class ClientWorker(Thread):
     # [CLI]Received>> 0|OK|Referee added to tournament
 
     def process_client_message(self, msg: str):
-        t = Tournament("2022 Fifa World Cup Qatar", datetime.date(2022, 1, 1),
-                       datetime.date(2022, 12, 30))  # name: str, start_date: datetime, end_date: datetime
-        msg = "C|USA"
+        # message = "D\n|T1\n|USA\n"
+        clean_msg = ""
+        for s in msg.split("|"):
+            stripped_s = s.rstrip('\n')
+            clean_msg += stripped_s + "|"
+        clean_msg.split("|")
+        print("HERE: " + clean_msg)
+
+        t = self.__server.tournament
         split_msg = msg.split("|")
         command = split_msg[0]
 
@@ -71,9 +77,10 @@ class ClientWorker(Thread):
             except:
                 return "1|ERR"
 
-        if command == "C":
+        if command == 'C':
             try:
                 t.add_country(split_msg[1])
+                print(t.participating_countries)
                 return "0|OK|Added Country"
             except:
                 return "1|ERR"
@@ -213,3 +220,10 @@ class ClientWorker(Thread):
                 pass
             except:
                 return "1|ERR"
+
+        self.__socket.close()
+        self.__keep_running_client = False
+        self.__server.shutdown_server()
+
+# test = ClientWorker()
+# test.start()

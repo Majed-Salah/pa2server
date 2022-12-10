@@ -29,6 +29,10 @@ class Tournament:
     def list_referees(self):
         return self.__list_referees
 
+    @property
+    def participating_countries(self):
+        return self.__participating_countries
+
     def load_from_file(self):
         pass
 
@@ -41,7 +45,7 @@ class Tournament:
 
         if len(matching_countries) == 0:
             country = Country(country_name)
-            self.__participating_countries.append(country)
+            self.__participating_countries.append(country.__str__())
 
         else:
             raise ValueError("Country already in tournament")

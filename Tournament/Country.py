@@ -5,3 +5,6 @@ class Country():
     @property
     def country_name(self):
         return self.__country_name
+
+    def __str__(self):
+        return self.__country_name
