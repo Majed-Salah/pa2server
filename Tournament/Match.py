@@ -4,56 +4,58 @@ from Referee import Referee
 from Player import Player
 from LineUp import LineUp
 
-class Match():
-    def __init__(self, match_datetime: datetime, team_A: LineUp, team_B: LineUp):
+
+class Match:
+    def __init__(self, match_datetime: datetime, team_a: Team, team_b: Team):
         self.__match_datetime = match_datetime
-        self.__team_A = team_A
-        self.__team_B = team_B
+        self.__team_a = team_a
+        self.__team_b = team_b
+        self.__team_a_lineup = LineUp(team_a)
+        self.__team_b_lineup = LineUp(team_b)
         self.__score_team_A = 0
         self.__score_team_B = 0
         self.__match_referees = []
 
+    def __str__(self):
+        return self.__match_datetime + " -- " + self.__team_a.name() + " AGAINST " + self.__team_b.name()
 
     @property
-    def team_A(self) -> LineUp:
-        return self.__team_A
-
+    def team_a(self) -> LineUp:
+        return self.__team_a
 
     @property
-    def team_B(self) -> LineUp:
-        return self.__team_B
+    def team_b(self) -> LineUp:
+        return self.__team_b
 
-
-    def set_match_score(self, score_A, score_B):
-        self.__score_team_A = score_A
-        self.__score_team_B = score_B
-
-
-    def add_referee(self, ref: Referee):
-        self.__match_referees.append(ref)
-
+    @property
+    def match_datetime(self):
+        return self.__match_datetime
 
     @property
     def match_referees(self):
         return self.__match_referees
 
+    def add_referee(self, ref: Referee):
+        self.__match_referees.append(ref)
 
-    def add_player(self, player: Player, team: Team):
-        if self.__team_A == team:
-            self.__team_A_lineup.append(player)
-        elif self.__team_B == team:
-            self.__team_B_lineup.append(player)
+    def add_player_to_lineup(self, player: Player, team: Team):
+        # Add the player passed in, to the squad of team that was passed in (team_a or team_b)
+        if self.__team_a == team:
+            self.__team_a_lineup.add_player(player)
+        elif self.__team_b == team:
+            self.__team_b_lineup.add_player(player)
         else:
             raise ValueError("Team is not in match")
 
+    def set_match_score(self, score_a, score_b):
+        self.__score_team_A = score_a
+        self.__score_team_B = score_b
+
+    def get_match_score(self) -> str:
+        return " (" + str(self.__score_team_A) + " - " + str(self.__score_team_B) + ")"
 
     def is_upcoming(self):
         if self.__match_datetime > datetime.now():
             return True
         else:
             return False
-
-
-    @property
-    def match_datetime(self):
-        return self.__match_datetime

@@ -6,21 +6,17 @@ class Player():
         self.__height = height
         self.__weight = weight
 
-
     @property
     def name(self):
         return self.__name
-
 
     @property
     def age(self):
         return self.__age
 
-
     @property
     def height(self):
         return self.__height
-
 
     @property
     def weight(self):
