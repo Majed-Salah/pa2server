@@ -28,6 +28,7 @@ class ClientWorker(Thread):
         while self.__keep_running_client:
             try:
                 client_msg = self.__socket.recv(1024).decode('UTF-8')  # receive a line of instruction
+                print("CLIENT MSG: " + client_msg)
                 if client_msg == "T|":
                     self.__socket.send("0|OK".encode('UTF-8'))
                     # TODO server.removeCW(self)

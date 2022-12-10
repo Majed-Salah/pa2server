@@ -7,7 +7,6 @@ from Player import Player
 from LineUp import LineUp
 
 
-
 class Tournament:
     def __init__(self, name: str, start_date: datetime.date, end_date: datetime.date):
         self.__name = name
