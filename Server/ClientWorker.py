@@ -215,25 +215,25 @@ class ClientWorker(Thread):
         if command == "SS":
             try:
                 # TODO SS Are we going to save things to a file?
-                with open('tournament.dat', 'wb') as f:
+                with open('./tournament.pickle', 'wb') as f:
                     pickle.dump(t, f)
-                pass
+                return "0|OK|State Saved Succesfully.\n"
             except:
                 return "1|ERR|Could not save state to file."
 
         if command == "LS":
             try:
                 # TODO LS Are we going to load things from a file?
-                with open('tournament.dat', 'rb') as f:
+                with open('./tournament.dat', 'rb') as f:
                     t = pickle.load(f)
-                    print((t, type(t)))
-                pass
+                    print((t.participating_countries, type(t)))
+                return "0|OK|Successfully loaded serialized file."
             except:
                 return "1|ERR|Could not load state from file."
 
-        self.__socket.close()
-        self.__keep_running_client = False
-        self.__server.shutdown_server()
+        #self.__socket.close()
+        #self.__keep_running_client = False
+        #self.__server.shutdown_server()
 
 # test = ClientWorker()
 # test.start()
