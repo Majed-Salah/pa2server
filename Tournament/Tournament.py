@@ -45,7 +45,7 @@ class Tournament:
 
         if len(matching_countries) == 0:
             country = Country(country_name)
-            self.__participating_countries.append(country.__str__())
+            self.__participating_countries.append(country)
 
         else:
             raise ValueError("Country already in tournament")
@@ -86,6 +86,9 @@ class Tournament:
         team.add_player(player_name, age, height, weight)
 
     def add_match(self, match_datetime: datetime, team_A_name: str, team_B_name: str):
+
+        print("Within function: ", match_datetime)
+
         team_A = None
         team_B = None
 

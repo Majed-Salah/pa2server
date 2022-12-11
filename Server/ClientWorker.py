@@ -4,7 +4,7 @@ import datetime
 from socket import socket, AF_INET, SOCK_STREAM
 from Server import Server
 from Tournament.Tournament import Tournament
-
+import pickle
 
 class ClientWorker(Thread):
     @property
@@ -39,6 +39,7 @@ class ClientWorker(Thread):
                     break
 
                 else:
+                    print("Server response test")
                     server_response = self.process_client_message(client_msg)
                     self.__socket.send(server_response.encode('UTF-8'))
             except:
@@ -70,156 +71,165 @@ class ClientWorker(Thread):
         split_msg = msg.split("|")
         command = split_msg[0]
 
+        print(command, split_msg[1])
+
         if command == "D":
             try:
                 t.add_team(split_msg[1], split_msg[2])
-                return "0|OK|Added team to tournament"
+                return "0|OK|Added team to tournament\n"
             except:
-                return "1|ERR"
+                return "1|ERR|Could not add team to tournament.\n"
 
         if command == 'C':
             try:
                 t.add_country(split_msg[1])
                 print(t.participating_countries)
-                return "0|OK|Added Country"
+                return "0|OK|Added Country\n"
             except:
-                return "1|ERR"
+                return "1|ERR|Country already in tournament.\n"
 
         if command == "R":
             try:
                 t.add_referee(split_msg[1], split_msg[2])
-                return "0|OK|Referee added to tournament"
+                return "0|OK|Referee added to tournament.\n"
             except:
-                return "1|ERR"
+                return "1|ERR|Failed to add referee to tournament.\n"
 
         if command == "P":
             try:
                 t.add_player(split_msg[1], split_msg[2], int(split_msg[3]), float(split_msg[4]), float(split_msg[5]))
-                return "0|OK|Player added to tournament"
+                return "0|OK|Player added to tournament.\n"
             except:
-                return "1|ERR"
+                return "1|ERR|Failed to add player to team.\n"
 
         if command == "M":
             try:
-                t.add_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
-                return "0|OK|Successfully added match to tournament."
+                print("Test format:", datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'))
+                t.add_match(datetime.datetime.strptime(split_msg[1], '%m-%d-%YT%H:%M'), split_msg[2], split_msg[3])
+                return "0|OK|Successfully added match to tournament.\n"
             except:
-                return "1|ERR"
+                return "1|ERR|Failed to add match to tournament.\n"
 
         if command == "A":
             try:
                 print(f"CHECKING DATE FORMAT: ", datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 t.add_referee_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2])
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "Z":
             try:
                 t.check_referee_for_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2])
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "S":
             try:
                 t.set_match_score(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), int(split_msg[2]),
                                   int(split_msg[3]))
-                return "0|OK|Match score successfully set."
+                return "0|OK|Match score successfully set.\n"
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "L":
             try:
                 t.get_upcoming_matches()
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "G":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 matches = t.get_matches_on(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 for match in matches:
                     response += "|" + match.__str__()
                 return response
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "F":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 matches = t.get_matches_for(split_msg[1])
                 for match in matches:
                     response += "|" + match.__str__()
                 return response
             except:
-                return "1|ERR|No matches for selected team."
+                return "1|ERR|No matches for selected team.\n"
 
         if command == "U":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 line_ups = t.get_match_lineups(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 for lineup in line_ups:
                     response += "|" + lineup.__str__()
                 return response
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "H":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 matches = t.list_matches()
                 for match in matches:
                     response += "|" + match.match_datetime()
                 return response
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "HH":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 detailed_matches = t.list_matches()
                 for match in detailed_matches:
                     if match.match_datetime() < datetime.datetime.now():
                         response += "|" + match.team_a().name() + "vs" + \
                                     match.team_b().name() + " @ " + match.match_datetime() + ", SCORE:" + match.get_match_score()
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "W":
             try:
-                response = "0|OK"
+                response = "0|OK\n"
                 teams = t.list_teams()
                 for team in teams:
                     response += "|" + team.name
                 return response
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "Y":
             try:
+                print()
                 t.add_player_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
-                return "0|OK|Player added to match."
+                return "0|OK|Player added to match.\n"
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "T":
             try:
                 self.__keep_running_client = False
             except:
-                return "1|ERR"
+                return "1|ERR\n"
 
         if command == "SS":
             try:
                 # TODO SS Are we going to save things to a file?
+                with open('tournament.dat', 'wb') as f:
+                    pickle.dump(t, f)
                 pass
             except:
-                return "1|ERR"
+                return "1|ERR|Could not save state to file."
 
         if command == "LS":
             try:
                 # TODO LS Are we going to load things from a file?
+                with open('tournament.dat', 'rb') as f:
+                    t = pickle.load(f)
+                    print((t, type(t)))
                 pass
             except:
-                return "1|ERR"
+                return "1|ERR|Could not load state from file."
 
         self.__socket.close()
         self.__keep_running_client = False
