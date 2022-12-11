@@ -49,6 +49,9 @@ class Server(Thread):
     def tournament(self):
         return self.__tournament
 
+    def set_tournament(self, tourney: Tournament):
+        self.__tournament = tourney
+
     def run(self):
         while self.keep_server_running:
             client_socket, addr = self.accept_con()

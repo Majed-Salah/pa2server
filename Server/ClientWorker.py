@@ -16,6 +16,10 @@ class ClientWorker(Thread):
         return self.__socket
 
     @property
+    def server(self):
+        return self.__server
+
+    @property
     def keep_running_client(self):
         return self.__keep_running_client
 
@@ -214,29 +218,26 @@ class ClientWorker(Thread):
 
         if command == "SS":
             try:
-                # TODO SS Are we going to save things to a file?
                 pickle_out = open("./tournament.pickle", "wb")
                 pickle.dump(t, pickle_out)
                 pickle_out.close()
-                # with open('./tournament.pickle', 'wb') as f:
-                #     pickle.dump(t, f)
-                return "0|OK|State Saved Succesfully.\n"
+                return "0|OK|State Saved Successfully.\n"
             except:
-                return "1|ERR|Could not save state to file."
+                return "1|ERR|Could not save state to file.\n"
 
         if command == "LS":
             try:
-                # TODO LS Are we going to load things from a file?
                 pickle_in = open("./tournament.pickle", "rb")
                 t = pickle.load(pickle_in)
                 pickle_in.close()
-                print("PICKLE: ", t.participating_countries[0].__str__())
-                # with open('./tournament.dat', 'rb') as f:
-                #     t = pickle.load(f)
-                #     print((t.participating_countries[0].__str__(), type(t)))
-                return "0|OK|Successfully loaded serialized file."
+
+                for c in t.participating_countries:
+                    print("PICKLE: ", c.__str__())
+
+                self.server.set_tournament(t)
+                return "0|OK|Successfully loaded serialized file.\n"
             except:
-                return "1|ERR|Could not load state from file."
+                return "1|ERR|Could not load state from file.\n"
 
         #self.__socket.close()
         #self.__keep_running_client = False
