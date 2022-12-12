@@ -17,15 +17,23 @@ class Match:
         self.__match_referees = []
 
     def __str__(self):
-        return self.__match_datetime + " -- " + self.__team_a.name() + " AGAINST " + self.__team_b.name()
+        return str(self.__match_datetime) + " -- " + self.team_a.name + " AGAINST " + self.team_b.name
 
     @property
-    def team_a(self) -> LineUp:
+    def team_a(self) -> Team:
         return self.__team_a
 
     @property
-    def team_b(self) -> LineUp:
-        return self.__team_b
+    def team_b(self) -> Team:
+        return self.__team_a
+
+    @property
+    def score_team_a(self):
+        return self.__score_team_A
+
+    @property
+    def score_team_b(self):
+        return self.__score_team_B
 
     @property
     def match_datetime(self):
@@ -52,7 +60,7 @@ class Match:
         self.__score_team_B = score_b
 
     def get_match_score(self) -> str:
-        return " (" + str(self.__score_team_A) + " - " + str(self.__score_team_B) + ")"
+        return " (" + str(self.score_team_a) + " - " + str(self.score_team_b) + ")"
 
     def is_upcoming(self):
         if self.__match_datetime > datetime.now():

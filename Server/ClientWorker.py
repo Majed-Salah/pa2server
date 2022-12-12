@@ -30,7 +30,7 @@ class ClientWorker(Thread):
                 if client_msg == "T|" or client_msg == '|':
                     self.__socket.send("0|OK".encode('UTF-8'))
                     # TODO server.removeCW(self)
-                    self.keep_running_client = False
+                    self.__keep_running_client = False
                     break
 
                 elif client_msg == "TERMINATE|":
@@ -53,7 +53,7 @@ class ClientWorker(Thread):
         split_msg = clean_msg.split("|")
         command = split_msg[0]
 
-        # print(command, split_msg[1])
+        print("command:", command)
 
         if command == "D":
             try:
@@ -134,10 +134,14 @@ class ClientWorker(Thread):
 
         if command == "F":
             try:
+                print("FFF w/", split_msg)
                 response = "0|OK"
                 matches = t.get_matches_for(split_msg[1])
+                print("matches:", matches)
                 for match in matches:
+                    print("HEREHHD", match.__str__())
                     response += "|" + match.__str__()
+                print("response:", response)
                 return response + "\n"
             except:
                 return "1|ERR|No matches for selected team.\n"
@@ -164,13 +168,13 @@ class ClientWorker(Thread):
 
         if command == "HH":
             try:
-                response = "0|OK"
+                response = ""
                 detailed_matches = t.list_matches
+                print("detailed_matches:", detailed_matches)
                 for match in detailed_matches:
-                    if match.match_datetime < datetime.datetime.now():
-                        response += "|" + match.team_a.name + "vs" + \
-                                    match.team_b.name + " @ " + match.match_datetime + ", SCORE:" + match.get_match_score
-                response += "\n"
+                    print(f"{match.match_datetime} <? {datetime.datetime.now()} -> {match.match_datetime > datetime.datetime.now()}")
+                    if match.match_datetime > datetime.datetime.now():
+                        response = f"0|OK|{match.team_a.name} vs {match.team_b.name} @ {match.match_datetime}, SCORE: {match.get_match_score()}\n"
                 print(f"RESPONSE: {response}")
                 return response
             except:
@@ -179,16 +183,8 @@ class ClientWorker(Thread):
         if command == "W":
             try:
                 response = "0|OK"
-                # resp = "0|OK|T1|T2\n"
-                # return resp
-                print(f"RESPONSE 1: {response}")
-                print("Team list:", t.list_teams)
                 for team in t.list_teams:
                     response += "|" + team.name
-                    print(f"RESPONSE 2: '{response}'")
-
-                print(f"RESPONSE 3: '{response}'")
-
                 return response + "\n"
             except:
                 return "1|ERR|Failed to retrieve teams.\n"

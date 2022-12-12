@@ -199,8 +199,9 @@ class Tournament:
 
     def get_matches_for(self, team_name: str):
         team_matches = []
-        for match in self.__list_matches:
-            if match.team_a.name() == team_name:
+        for match in self.list_matches:
+            print(f"GMF: {match.team_a.name} == {team_name}")
+            if match.team_a.name == team_name:
                 team_matches.append(match)
         return team_matches
 
