@@ -101,7 +101,7 @@ class Tournament:
             raise ValueError("Team is not participating in the tournament.")
 
         match = Match(match_datetime, team_A, team_B)
-        self.list_teams.append(match)
+        self.list_matches.append(match)
 
     def add_referee_to_match(self, match_datetime: datetime, ref_name: str):
         match: Match = None

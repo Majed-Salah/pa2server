@@ -27,9 +27,10 @@ class ClientWorker(Thread):
         while self.__keep_running_client:
             try:
                 client_msg = self.__socket.recv(1024).decode('UTF-8')  # receive a line of instruction
-                if client_msg == "T|":
+                if client_msg == "T|" or client_msg == '|':
                     self.__socket.send("0|OK".encode('UTF-8'))
                     # TODO server.removeCW(self)
+                    self.keep_running_client = False
                     break
 
                 elif client_msg == "TERMINATE|":
@@ -45,22 +46,12 @@ class ClientWorker(Thread):
 
 
     def process_client_message(self, msg: str):
-        msg.replace("\n", "")
-
-        clean_msg = ""
-        for s in msg.split("|"):
-            stripped_s = s.rstrip('\n')
-            clean_msg += stripped_s + "|"
-
-        clean_msg.split("|")
-        print("HERE: " + clean_msg)
 
         t = self.__server.tournament
-        split_msg = msg.split("|")
+
+        clean_msg = msg.rstrip('\n')
+        split_msg = clean_msg.split("|")
         command = split_msg[0]
-
-
-
 
         # print(command, split_msg[1])
 
@@ -181,8 +172,9 @@ class ClientWorker(Thread):
                                     match.team_b.name + " @ " + match.match_datetime + ", SCORE:" + match.get_match_score
                 response += "\n"
                 print(f"RESPONSE: {response}")
+                return response
             except:
-                return "1|ERR\n"
+                return "1|ERR|Could not retrieve matches on these filters.\n"
 
         if command == "W":
             try:
@@ -190,14 +182,16 @@ class ClientWorker(Thread):
                 # resp = "0|OK|T1|T2\n"
                 # return resp
                 print(f"RESPONSE 1: {response}")
+                print("Team list:", t.list_teams)
                 for team in t.list_teams:
                     response += "|" + team.name
                     print(f"RESPONSE 2: '{response}'")
+
                 print(f"RESPONSE 3: '{response}'")
 
                 return response + "\n"
             except:
-                return "1|ERR\n"
+                return "1|ERR|Failed to retrieve teams.\n"
 
         if command == "Y":
             try:
