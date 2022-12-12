@@ -86,14 +86,11 @@ class Tournament:
         team.add_player(player_name, age, height, weight)
 
     def add_match(self, match_datetime: datetime, team_A_name: str, team_B_name: str):
-
-        print("Within function: ", match_datetime)
-
         team_A = None
         team_B = None
 
-        team_A_list = [team for team in self.__list_teams if team.name == team_A_name]
-        team_B_list = [team for team in self.__list_teams if team.name == team_B_name]
+        team_A_list = [team for team in self.list_teams if team.name == team_A_name]
+        team_B_list = [team for team in self.list_teams if team.name == team_B_name]
 
         if len(team_A_list) == 1:
             team_A = team_A_list[0]
@@ -104,7 +101,7 @@ class Tournament:
             raise ValueError("Team is not participating in the tournament.")
 
         match = Match(match_datetime, team_A, team_B)
-        self.__list_matches.append(match)
+        self.list_teams.append(match)
 
     def add_referee_to_match(self, match_datetime: datetime, ref_name: str):
         match: Match = None

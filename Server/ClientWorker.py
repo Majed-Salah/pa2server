@@ -1,16 +1,10 @@
-import re
 from threading import Thread
 import datetime
-from socket import socket, AF_INET, SOCK_STREAM
 from Server import Server
-from Tournament.Tournament import Tournament
 import pickle
 
-class ClientWorker(Thread):
-    @property
-    def connection(self):
-        return self.__connection
 
+class ClientWorker(Thread):
     @property
     def socket(self):
         return self.__socket
@@ -49,25 +43,15 @@ class ClientWorker(Thread):
             except:
                 return "1|ERR"
 
-    # -------------- EXAMPLE MESSAGES ---------------
-    # [CLI]Sending>> C|USA
-    # [CLI]Received>> 0|OK|Added Country
-
-    # [CLI]Sending>> D|T1|USA
-    # [CLI]Received>> 0|OK|Added team to tournament
-
-    # [CLI]Sending>> C|A
-    # [CLI]Received>> 0|OK|Added Country
-
-    # [CLI]Sending>> R|R1|A
-    # [CLI]Received>> 0|OK|Referee added to tournament
 
     def process_client_message(self, msg: str):
-        # message = "D\n|T1\n|USA\n"
+        msg.replace("\n", "")
+
         clean_msg = ""
         for s in msg.split("|"):
             stripped_s = s.rstrip('\n')
             clean_msg += stripped_s + "|"
+
         clean_msg.split("|")
         print("HERE: " + clean_msg)
 
@@ -75,7 +59,10 @@ class ClientWorker(Thread):
         split_msg = msg.split("|")
         command = split_msg[0]
 
-        print(command, split_msg[1])
+
+
+
+        # print(command, split_msg[1])
 
         if command == "D":
             try:
@@ -108,8 +95,11 @@ class ClientWorker(Thread):
 
         if command == "M":
             try:
-                print("Test format:", datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'))
-                t.add_match(datetime.datetime.strptime(split_msg[1], '%m-%d-%YT%H:%M'), split_msg[2], split_msg[3])
+                print(f"TEST FORMAT: {datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M')} -> Type({type(datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'))})")
+                print("----")
+                print(fr'{split_msg[2]}')
+                print(fr'{split_msg[3]}')
+                t.add_match(datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'), split_msg[2], split_msg[3])
                 return "0|OK|Successfully added match to tournament.\n"
             except:
                 return "1|ERR|Failed to add match to tournament.\n"
@@ -183,28 +173,34 @@ class ClientWorker(Thread):
 
         if command == "HH":
             try:
-                response = "0|OK\n"
-                detailed_matches = t.list_matches()
+                response = "0|OK"
+                detailed_matches = t.list_matches
                 for match in detailed_matches:
-                    if match.match_datetime() < datetime.datetime.now():
-                        response += "|" + match.team_a().name() + "vs" + \
-                                    match.team_b().name() + " @ " + match.match_datetime() + ", SCORE:" + match.get_match_score()
+                    if match.match_datetime < datetime.datetime.now():
+                        response += "|" + match.team_a.name + "vs" + \
+                                    match.team_b.name + " @ " + match.match_datetime + ", SCORE:" + match.get_match_score
+                response += "\n"
+                print(f"RESPONSE: {response}")
             except:
                 return "1|ERR\n"
 
         if command == "W":
             try:
-                response = "0|OK\n"
-                teams = t.list_teams()
-                for team in teams:
+                response = "0|OK"
+                # resp = "0|OK|T1|T2\n"
+                # return resp
+                print(f"RESPONSE 1: {response}")
+                for team in t.list_teams:
                     response += "|" + team.name
-                return response
+                    print(f"RESPONSE 2: '{response}'")
+                print(f"RESPONSE 3: '{response}'")
+
+                return response + "\n"
             except:
                 return "1|ERR\n"
 
         if command == "Y":
             try:
-                print()
                 t.add_player_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
                 return "0|OK|Player added to match.\n"
             except:
@@ -230,18 +226,14 @@ class ClientWorker(Thread):
                 pickle_in = open("./tournament.pickle", "rb")
                 t = pickle.load(pickle_in)
                 pickle_in.close()
-
-                for c in t.participating_countries:
-                    print("PICKLE: ", c.__str__())
-
                 self.server.set_tournament(t)
                 return "0|OK|Successfully loaded serialized file.\n"
             except:
                 return "1|ERR|Could not load state from file.\n"
 
-        #self.__socket.close()
-        #self.__keep_running_client = False
-        #self.__server.shutdown_server()
+        # self.__socket.close()
+        # self.__keep_running_client = False
+        # self.__server.shutdown_server()
 
 # test = ClientWorker()
 # test.start()
