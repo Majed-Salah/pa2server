@@ -133,41 +133,41 @@ class ClientWorker(Thread):
 
         if command == "G":
             try:
-                response = "0|OK\n"
+                response = "0|OK"
                 matches = t.get_matches_on(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 for match in matches:
                     response += "|" + match.__str__()
-                return response
+                return response + "\n"
             except:
                 return "1|ERR\n"
 
         if command == "F":
             try:
-                response = "0|OK\n"
+                response = "0|OK"
                 matches = t.get_matches_for(split_msg[1])
                 for match in matches:
                     response += "|" + match.__str__()
-                return response
+                return response + "\n"
             except:
                 return "1|ERR|No matches for selected team.\n"
 
         if command == "U":
             try:
-                response = "0|OK\n"
+                response = "0|OK"
                 line_ups = t.get_match_lineups(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 for lineup in line_ups:
                     response += "|" + lineup.__str__()
-                return response
+                return response + "\n"
             except:
                 return "1|ERR\n"
 
         if command == "H":
             try:
-                response = "0|OK\n"
+                response = "0|OK"
                 matches = t.list_matches()
                 for match in matches:
                     response += "|" + match.match_datetime()
-                return response
+                return response + "\n"
             except:
                 return "1|ERR\n"
 
