@@ -93,20 +93,19 @@ class ClientWorker(Thread):
 
         if command == "A":
             try:
-                print(f"CHECKING DATE FORMAT: ", datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
-                t.add_referee_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2])
+                t.add_referee_to_match(datetime.datetime.fromisoformat(split_msg[1]), split_msg[2])
             except:
                 return "1|ERR|Could not add referee to match\n"
 
         if command == "Z":
             try:
-                t.check_referee_for_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2])
+                t.check_referee_for_match(datetime.datetime.fromisoformat(split_msg[1]), split_msg[2])
             except:
                 return "1|ERR\n"
 
         if command == "S":
             try:
-                t.set_match_score(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), int(split_msg[2]),
+                t.set_match_score(datetime.datetime.fromisoformat(split_msg[1]), int(split_msg[2]),
                                   int(split_msg[3]))
                 return "0|OK|Match score successfully set.\n"
             except Exception as e:
@@ -121,12 +120,14 @@ class ClientWorker(Thread):
         if command == "G":
             try:
                 response = "0|OK"
-                matches = t.get_matches_on(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
+                matches = t.get_matches_on(datetime.datetime.fromisoformat(split_msg[1]))
                 for match in matches:
-                    response += "|" + match.__str__()
+                    print(1)
+                    response += f"|{match.__str__()}"
+                print("resp:", response)
                 return response + "\n"
-            except:
-                return "1|ERR\n"
+            except Exception as e:
+                return f"1|ERR|{e}\n"
 
         if command == "F":
             try:
@@ -139,8 +140,8 @@ class ClientWorker(Thread):
                     response += "|" + match.__str__()
                 print("response:", response)
                 return response + "\n"
-            except:
-                return "1|ERR|No matches for selected team.\n"
+            except Exception as e:
+                return f"1|ERR|{e}\n"
 
         if command == "U":
             try:
@@ -170,10 +171,10 @@ class ClientWorker(Thread):
                 response = ""
                 detailed_matches = t.list_matches
                 for match in detailed_matches:
-                    print(f"{match.match_datetime} <? {datetime.datetime.now()} -> {match.match_datetime > datetime.datetime.now()}")
-                    if match.match_datetime > datetime.datetime.now():
-                        response = f"0|OK|{match.team_a.name} vs {match.team_b.name} @ {match.match_datetime}, SCORE: {match.get_match_score()}\n"
-                return response
+                    response += f"|{match.__str__()}"
+                    # if match.match_datetime > datetime.datetime.now():
+                    #     response = f"0|OK|{match.team_a.name} vs {match.team_b.name} @ {match.match_datetime}, SCORE: {match.get_match_score()}\n"
+                return f"0|OK{response}\n"
             except:
                 return "1|ERR|Could not retrieve matches on these filters.\n"
 

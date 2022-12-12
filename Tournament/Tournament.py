@@ -192,8 +192,10 @@ class Tournament:
 
     def get_matches_on(self, match_datetime: datetime):
         date_matches = []
-        for match in self.__list_matches:
-            if match.match_datetime == match_datetime:
+        for match in self.list_matches:
+            print("Within function:", match.__str__())
+            print(f"{match.match_datetime} == {match_datetime}")
+            if match.match_datetime.date() == match_datetime.date():
                 date_matches.append(match)
         return date_matches
 

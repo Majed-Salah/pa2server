@@ -17,7 +17,12 @@ class Match:
         self.__match_referees = []
 
     def __str__(self):
-        return str(self.__match_datetime) + " -- " + self.team_a.name + " AGAINST " + self.team_b.name
+        response = ""
+        if self.match_datetime > datetime.now():
+            response = str(self.match_datetime) + " -- " + self.team_a.name + " AGAINST " + self.team_b.name
+        else:
+            response = str(self.match_datetime) + " -- " + self.team_a.name + " AGAINST " + self.team_b.name + " (" + str(self.score_team_a) + " - " + str(self.score_team_b) + ")"
+        return response
 
     @property
     def team_a(self) -> Team:
