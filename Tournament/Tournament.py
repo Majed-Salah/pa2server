@@ -163,7 +163,6 @@ class Tournament:
         elif len(list_matches) == 1:
             match = list_matches[0]
 
-        print("---", match.team_a.name, match.team_b.name, team_name)
         if match.team_a.name == team_name:
             lineup = match.team_a_lineup
         elif match.team_b.name == team_name:
@@ -193,8 +192,6 @@ class Tournament:
     def get_matches_on(self, match_datetime: datetime):
         date_matches = []
         for match in self.list_matches:
-            print("Within function:", match.__str__())
-            print(f"{match.match_datetime} == {match_datetime}")
             if match.match_datetime.date() == match_datetime.date():
                 date_matches.append(match)
         return date_matches
@@ -208,9 +205,7 @@ class Tournament:
 
     def get_match_lineups(self, match_datetime: datetime):
         match_line_up = []
-        print("self.list_matches:", self.list_matches)
         for match in self.list_matches:
-            print(f"GML: {match.match_datetime} == {match_datetime}")
             if match.match_datetime == match_datetime:
                 match_line_up.append(match.team_a_lineup)
                 match_line_up.append(match.team_b_lineup)

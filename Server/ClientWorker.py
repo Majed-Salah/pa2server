@@ -38,12 +38,10 @@ class ClientWorker(Thread):
                     break
 
                 else:
-                    print("Server response test")
                     server_response = self.process_client_message(client_msg)
                     self.__socket.send(server_response.encode('UTF-8'))
             except:
                 return "1|ERR"
-
 
     def process_client_message(self, msg: str):
 
@@ -52,8 +50,6 @@ class ClientWorker(Thread):
         clean_msg = msg.rstrip('\n')
         split_msg = clean_msg.split("|")
         command = split_msg[0]
-
-        print("command:", command)
 
         if command == "D":
             try:
@@ -65,7 +61,6 @@ class ClientWorker(Thread):
         if command == 'C':
             try:
                 t.add_country(split_msg[1])
-                print(t.participating_countries)
                 return "0|OK|Added Country\n"
             except:
                 return "1|ERR|Country already in tournament.\n"
@@ -122,23 +117,17 @@ class ClientWorker(Thread):
                 response = "0|OK"
                 matches = t.get_matches_on(datetime.datetime.fromisoformat(split_msg[1]))
                 for match in matches:
-                    print(1)
                     response += f"|{match.__str__()}"
-                print("resp:", response)
                 return response + "\n"
             except Exception as e:
                 return f"1|ERR|{e}\n"
 
         if command == "F":
             try:
-                print("FFF w/", split_msg)
                 response = "0|OK"
                 matches = t.get_matches_for(split_msg[1])
-                print("matches:", matches)
                 for match in matches:
-                    print("HEREHHD", match.__str__())
                     response += "|" + match.__str__()
-                print("response:", response)
                 return response + "\n"
             except Exception as e:
                 return f"1|ERR|{e}\n"
@@ -146,13 +135,9 @@ class ClientWorker(Thread):
         if command == "U":
             try:
                 response = "0|OK"
-                print(split_msg[1])
-                print("start:", datetime.datetime.fromisoformat(split_msg[1]))
                 line_ups = t.get_match_lineups(datetime.datetime.fromisoformat(split_msg[1]))
                 for lineup in line_ups:
-                    print("lineup.__str__():", lineup.__str__())
                     response += f"|{lineup.__str__()}"
-                print("response:", response)
                 return response + "\n"
             except Exception as e:
                 return f"1|ERR|{e}\n"
@@ -172,8 +157,6 @@ class ClientWorker(Thread):
                 detailed_matches = t.list_matches
                 for match in detailed_matches:
                     response += f"|{match.__str__()}"
-                    # if match.match_datetime > datetime.datetime.now():
-                    #     response = f"0|OK|{match.team_a.name} vs {match.team_b.name} @ {match.match_datetime}, SCORE: {match.get_match_score()}\n"
                 return f"0|OK{response}\n"
             except:
                 return "1|ERR|Could not retrieve matches on these filters.\n"
