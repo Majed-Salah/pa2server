@@ -25,7 +25,15 @@ class Match:
 
     @property
     def team_b(self) -> Team:
-        return self.__team_a
+        return self.__team_b
+
+    @property
+    def team_a_lineup(self) -> LineUp:
+        return self.__team_a_lineup
+
+    @property
+    def team_b_lineup(self) -> LineUp:
+        return self.__team_b_lineup
 
     @property
     def score_team_a(self):

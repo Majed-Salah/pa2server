@@ -2,15 +2,16 @@ from Team import Team
 from Player import Player
 
 
-class LineUp():
+class LineUp:
     def __init__(self, team: Team):
         self.__team = team
         self.__listOfPlayers = []
 
     def __str__(self):
         s = ""
-        for p in self.__listOfPlayers:
-            s += p.name() + ";"
+        for p in self.list_of_players:
+            print("p.name:", p.name)
+            s += f"{p.name};"
         return s
 
     @property
@@ -22,4 +23,4 @@ class LineUp():
         return self.__listOfPlayers
 
     def add_player(self, player: Player):
-        self.__listOfPlayers.append(player)
+        self.list_of_players.append(player)

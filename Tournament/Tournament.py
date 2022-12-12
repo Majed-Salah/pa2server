@@ -152,22 +152,22 @@ class Tournament:
         return True
 
     def add_player_to_match(self, match_datetime: datetime, team_name: str, player_name: str):
-
         match: Match = None
         lineup: LineUp = None
         p: Player = None
 
-        list_matches = [match for match in self.__list_matches if match.match_datetime == match_datetime]
+        list_matches = [match for match in self.list_matches if match.match_datetime == match_datetime]
 
         if len(list_matches) == 0:
             raise ValueError("Match is not in tournament.")
         elif len(list_matches) == 1:
             match = list_matches[0]
 
-        if match.team_A.name == team_name:
-            lineup = match.team_A
-        elif match.team_B.name == team_name:
-            lineup = match.team_B
+        print("---", match.team_a.name, match.team_b.name, team_name)
+        if match.team_a.name == team_name:
+            lineup = match.team_a_lineup
+        elif match.team_b.name == team_name:
+            lineup = match.team_b_lineup
         else:
             raise ValueError("Team not participating in this match")
 
@@ -180,7 +180,7 @@ class Tournament:
 
     def set_match_score(self, match_datetime: datetime, score_a: int, score_b: int):
         for match in self.__list_matches:
-            if match.match_datetime() == match_datetime:
+            if match.match_datetime == match_datetime:
                 match.set_match_score(score_a, score_b)  # found the right match
 
     def get_upcoming_matches(self) -> []:
@@ -200,15 +200,16 @@ class Tournament:
     def get_matches_for(self, team_name: str):
         team_matches = []
         for match in self.list_matches:
-            print(f"GMF: {match.team_a.name} == {team_name}")
             if match.team_a.name == team_name:
                 team_matches.append(match)
         return team_matches
 
     def get_match_lineups(self, match_datetime: datetime):
         match_line_up = []
-        for match in self.__list_matches:
+        print("self.list_matches:", self.list_matches)
+        for match in self.list_matches:
+            print(f"GML: {match.match_datetime} == {match_datetime}")
             if match.match_datetime == match_datetime:
-                match_line_up.append(match.__team_a_lineup)
-                match_line_up.append(match.__team_b_lineup)
-
+                match_line_up.append(match.team_a_lineup)
+                match_line_up.append(match.team_b_lineup)
+        return match_line_up

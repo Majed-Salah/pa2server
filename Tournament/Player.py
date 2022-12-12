@@ -1,5 +1,4 @@
-class Player():
-
+class Player:
     def __init__(self, name: str, age: int, height: float, weight: float):
         self.__name = name
         self.__age = age

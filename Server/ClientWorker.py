@@ -86,10 +86,6 @@ class ClientWorker(Thread):
 
         if command == "M":
             try:
-                print(f"TEST FORMAT: {datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M')} -> Type({type(datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'))})")
-                print("----")
-                print(fr'{split_msg[2]}')
-                print(fr'{split_msg[3]}')
                 t.add_match(datetime.datetime.strptime(split_msg[1], '%Y-%m-%dT%H:%M'), split_msg[2], split_msg[3])
                 return "0|OK|Successfully added match to tournament.\n"
             except:
@@ -100,7 +96,7 @@ class ClientWorker(Thread):
                 print(f"CHECKING DATE FORMAT: ", datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
                 t.add_referee_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2])
             except:
-                return "1|ERR\n"
+                return "1|ERR|Could not add referee to match\n"
 
         if command == "Z":
             try:
@@ -113,8 +109,8 @@ class ClientWorker(Thread):
                 t.set_match_score(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), int(split_msg[2]),
                                   int(split_msg[3]))
                 return "0|OK|Match score successfully set.\n"
-            except:
-                return "1|ERR\n"
+            except Exception as e:
+                return f"1|ERR|{e}\n"
 
         if command == "L":
             try:
@@ -149,19 +145,22 @@ class ClientWorker(Thread):
         if command == "U":
             try:
                 response = "0|OK"
-                line_ups = t.get_match_lineups(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'))
+                print(split_msg[1])
+                print("start:", datetime.datetime.fromisoformat(split_msg[1]))
+                line_ups = t.get_match_lineups(datetime.datetime.fromisoformat(split_msg[1]))
                 for lineup in line_ups:
-                    response += "|" + lineup.__str__()
+                    print("lineup.__str__():", lineup.__str__())
+                    response += f"|{lineup.__str__()}"
+                print("response:", response)
                 return response + "\n"
-            except:
-                return "1|ERR\n"
+            except Exception as e:
+                return f"1|ERR|{e}\n"
 
         if command == "H":
             try:
                 response = "0|OK"
-                matches = t.list_matches()
-                for match in matches:
-                    response += "|" + match.match_datetime()
+                for match in t.list_matches:
+                    response += f"|{match.match_datetime}"
                 return response + "\n"
             except:
                 return "1|ERR\n"
@@ -170,12 +169,10 @@ class ClientWorker(Thread):
             try:
                 response = ""
                 detailed_matches = t.list_matches
-                print("detailed_matches:", detailed_matches)
                 for match in detailed_matches:
                     print(f"{match.match_datetime} <? {datetime.datetime.now()} -> {match.match_datetime > datetime.datetime.now()}")
                     if match.match_datetime > datetime.datetime.now():
                         response = f"0|OK|{match.team_a.name} vs {match.team_b.name} @ {match.match_datetime}, SCORE: {match.get_match_score()}\n"
-                print(f"RESPONSE: {response}")
                 return response
             except:
                 return "1|ERR|Could not retrieve matches on these filters.\n"
@@ -191,10 +188,10 @@ class ClientWorker(Thread):
 
         if command == "Y":
             try:
-                t.add_player_to_match(datetime.datetime.strptime(split_msg[1], '%d/%m/%y'), split_msg[2], split_msg[3])
+                t.add_player_to_match(datetime.datetime.fromisoformat(split_msg[1]), split_msg[2], split_msg[3])
                 return "0|OK|Player added to match.\n"
-            except:
-                return "1|ERR\n"
+            except Exception as e:
+                return f"1|ERR|{e}\n"
 
         if command == "T":
             try:
